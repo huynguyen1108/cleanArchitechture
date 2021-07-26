@@ -1,0 +1,21 @@
+android{
+    defaultConfig {
+        applicationId versions.app.applicationId
+        minSdkVersion versions.android.minSdk
+        targetSdkVersion versions.android.targetSdk
+
+        versionCode versions.app.versionCode
+        versionName versions.app.versionName
+
+        multiDexEnabled true
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        // Popinfo
+        def popInfoAppId = "ANf7xwo3sMBkJ9eBcVAvW7yLXtcmpXfS"
+        def popInfoSenderId = "project:918712446062"
+        manifestPlaceholders = [
+                popinfo_app_id   : popInfoAppId,
+                popinfo_sender_id: popInfoSenderId
+        ]
+    }
+}

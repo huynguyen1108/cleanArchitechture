@@ -1,0 +1,47 @@
+// ktlint options are here
+// https://github.com/JLLeitschuh/ktlint-gradle/blob/master/plugin/src/main/kotlin/org/jlleitschuh/gradle/ktlint/KtlintExtension.kt
+ktlint {
+  // comment out if it should be fixed, otherwise it uses default
+  //version = "0.36.0"
+
+  // by default, standard ruleset is applied
+  // https://github.com/pinterest/ktlint#standard-rules
+
+  // enable if it's for android app
+  // if enabled, it follows https://developer.android.com/kotlin/style-guide
+  android = true
+
+  // output settings
+  debug = true
+  verbose = true
+  outputToConsole = true
+  outputColorName = "RED"
+
+  // if set, uses editorconfig
+  // to enable formatting with editorconfig, enable `enableExperimentalRules` to `ture`
+  additionalEditorconfigFile = file(".editorconfig")
+
+  // you can specify disabled rules by "id"
+  // https://github.com/pinterest/ktlint#custom-editorconfig-properties
+  // "id" is attained from source code like this:
+  // https://github.com/pinterest/ktlint/blob/master/ktlint-ruleset-standard/src/main/kotlin/com/pinterest/ktlint/ruleset/standard/NoWildcardImportsRule.kt#L8
+  disabledRules=["no-wildcard-imports", "max-line-length"]
+
+  reporters {
+    // set `checkstyle` for Danger( auto PR review CI tool )
+    reporter "checkstyle"
+  }
+
+  // continue build if there are any failures
+  ignoreFailures = true
+
+  // https://github.com/pinterest/ktlint#experimental-rules
+  enableExperimentalRules = true
+
+  kotlinScriptAdditionalPaths {
+    include fileTree("scripts/")
+  }
+  filter {
+    exclude("**/generated/**")
+  }
+}

@@ -1,0 +1,22 @@
+# https://editorconfig.org/#file-format-details
+
+root = true
+
+[*]
+charset = utf-8
+indent_style = space
+indent_size = 2
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{java,kt,kts}]
+continuation_indent_size = 4
+# possible values: number (e.g. 120) (package name, imports & comments are ignored), "off"
+# it's automatically set to 100 on `ktlint --android ...` (per Android Kotlin Style Guide)
+max_line_length=120
+
+# Please refer lint below when you want to modify .editorconfig.
+# It seems that rulesets other than described within the link page
+# are not supported by ktlint.
+# https://github.com/pinterest/ktlint#editorconfig

@@ -1,0 +1,234 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
+plugins {
+  id 'com.android.application'
+  id 'kotlin-android'
+  id 'kotlin-android-extensions'
+  id 'kotlin-kapt'
+  id "org.jlleitschuh.gradle.ktlint"
+  id "androidx.navigation.safeargs"
+  id 'realm-android'
+  id 'com.akaita.android.easylauncher'
+}
+
+apply from: '../ktlint.gradle'
+apply from: '../config/defaultConfig.gradle'
+apply from: '../config/flavorConfig.gradle'
+
+android {
+  compileSdkVersion versions.android.compileSdk
+  buildToolsVersion versions.android.buildTools
+
+  packagingOptions {
+    exclude 'META-INF/DEPENDENCIES'
+    exclude 'META-INF/LICENSE'
+    exclude 'META-INF/LICENSE.txt'
+    exclude 'META-INF/license.txt'
+    exclude 'META-INF/NOTICE'
+    exclude 'META-INF/NOTICE.txt'
+    exclude 'META-INF/notice.txt'
+    exclude 'META-INF/ASL2.0'
+    exclude 'META-INF/INDEX.LIST'
+  }
+
+  testOptions {
+    unitTests.returnDefaultValues = true
+    unitTests.includeAndroidResources = true
+  }
+
+  dataBinding {
+    enabled = true
+  }
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
+  kotlinOptions {
+    jvmTarget = '1.8'
+  }
+
+  // modify apk file name depends on each build varients and branch
+  // appname-[versionName]-[productFlavors]-[buildTypes]-[branch name]-[hash].apk
+  // If `copyApkTo` is set on gradle.propertise, the apk will be copied to that directory.
+  applicationVariants.all { variant ->
+    variant.outputs.all { output ->
+      if (!outputFileName?.endsWith('.apk')) {
+        return
+      }
+      def flavorName = variant.productFlavors[0].name
+      def typeName = variant.buildType.name
+      outputFileName = "${defaultConfig.versionName}" +
+        "-${flavorName}" +
+        "-${typeName}" +
+        ".apk"
+      if (copyApkTo != "") {
+        copy {
+          include outputFileName
+          from output.outputFile.parent
+          into "${copyApkTo}"
+        }
+      }
+    }
+  }
+
+  flavorDimensions "mode"
+
+//  signingConfigs {
+//    def propsFile = rootProject.file('keystore.properties')
+//    def props = new Properties()
+//    props.load(new FileInputStream(propsFile))
+//
+//    def homeDir = System.getenv("HOME")
+//    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+//      homeDir = System.getenv("USERPROFILE")
+//    }
+//    // keystore.propertiesに当該propertyがあればそれを使い、なければ AndroidStudio デフォルトを利用する
+//    // keystore.properties にはフェリカネットワークス社へ提供した署名鍵を指定する
+//    config {
+//      keyAlias props.getProperty("keyAlias", 'androiddebugkey')
+//      keyPassword props.getProperty("keyPassword", 'android')
+//      storeFile file(props.getProperty("storeFile", "${homeDir}/.android/debug.keystore"))
+//      storePassword props.getProperty("storePassword", 'android')
+//    }
+//  }
+
+  buildTypes {
+    debug {
+      debuggable true
+      zipAlignEnabled true
+      versionNameSuffix = "." + new Date().format('yyyyMMdd_HHmm').toString()
+//      signingConfig signingConfigs.config
+    }
+
+    release {
+      debuggable false
+      zipAlignEnabled true
+      minifyEnabled false
+      proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+      //      signingConfig signingConfigs.config
+    }
+  }
+
+  //get key từ ndk
+//  externalNativeBuild {
+//    ndkBuild {
+//      path 'src/main/jni/Android.mk'
+//    }
+//  }
+}
+
+easylauncher {
+  iconNames "@mipmap/ic_launcher"
+  foregroundIconNames "@mipmap/ic_launcher_round"
+
+  defaultFlavorNaming = true
+
+  buildTypes {
+    debug {}
+    release {}
+  }
+
+  productFlavors {
+    dev {
+      filters = greenRibbonFilter()
+    }
+  }
+
+  variants {
+    dev {
+      filters = greenRibbonFilter()
+    }
+  }
+}
+
+dependencies {
+  // used within TIS SDK
+  implementation libs.utility.jackson.core
+  implementation libs.utility.jackson.annotations
+  implementation libs.utility.jackson.databind
+
+  // rx
+  implementation libs.rx.java
+  implementation libs.rx.android
+  implementation libs.rx.kotlin
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+
+    // dagger (Dependency Injection)
+  kapt libs.dagger.java.compiler
+  kapt libs.dagger.android.compiler
+  api libs.dagger.java.core
+  api libs.dagger.android.core
+  api libs.dagger.android.support
+
+  // networking
+  implementation libs.networking.okhttp.core
+//  implementation libs.networking.okhttp.logging
+  implementation libs.networking.retrofit.core
+  implementation libs.networking.retrofit.rx
+  implementation libs.networking.retrofit.gson
+  implementation libs.networking.retrofit.moshi
+  implementation libs.networking.retrofit.scalars
+  implementation libs.networking.moshi.adapters
+  implementation libs.networking.moshi.kotlin
+  kaptRelease libs.networking.moshi.codegen
+
+  implementation libs.networking.glide.core
+  kapt libs.networking.glide.compiler
+  implementation libs.networking.picasso.core
+  implementation libs.networking.picasso.okhttp
+
+  // utility
+  implementation libs.utility.unicode
+  implementation libs.utility.lottie
+  implementation libs.utility.databinding.ktx
+
+  // debugging
+  implementation libs.debugging.timber
+  implementation libs.debugging.stetho.core
+  implementation libs.debugging.stetho.okhttp
+
+  // ui
+  implementation libs.ui.appcompat
+  implementation libs.ui.material
+  implementation libs.ui.constraintlayout
+  implementation libs.ui.recyclerview
+  implementation libs.ui.cardview
+  implementation libs.ui.drawer
+  implementation libs.ui.browser
+
+  // Barcode scanning
+  implementation libs.barcode.core
+  implementation libs.barcode.embedded
+
+  // navigation
+  implementation libs.navigation.java.fragment
+  implementation libs.navigation.java.ui
+  implementation libs.navigation.kotlin.fragment
+  implementation libs.navigation.kotlin.ui
+
+  // kotlin
+  implementation libs.kotlin.stdlibJdk7
+//  implementation libs.kotlin.stdlib
+
+  // androidx
+  implementation libs.androidx.core
+  implementation libs.androidx.multidex
+  implementation libs.androidx.lifecycle.runtime
+  implementation libs.androidx.lifecycle.livedata
+  implementation libs.androidx.lifecycle.rx
+  implementation libs.androidx.paging
+
+  // test
+  testImplementation libs.androidx.test.core
+  testImplementation libs.androidx.test.corektx
+  testImplementation libs.androidx.test.runner
+  testImplementation libs.test.robolectric
+  testImplementation libs.test.mockito
+  testImplementation 'junit:junit:4.12'
+
+  androidTestImplementation libs.androidx.test.core
+  androidTestImplementation libs.androidx.test.corektx
+  androidTestImplementation libs.androidx.test.runner
+  androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+  androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+}

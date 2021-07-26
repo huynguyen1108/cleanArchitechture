@@ -1,0 +1,24 @@
+android {
+  productFlavors {
+    dev {
+      dimension "mode"
+      def propsFile = rootProject.file('local.properties')
+      def props = new Properties()
+      props.load(new FileInputStream(propsFile))
+
+      versionNameSuffix = ".dev"
+      applicationIdSuffix = ".dev"
+      buildConfigField "String", "API_BASE_URL", props.getProperty("API_BASE_URL", System.getenv("API_BASE_URL"))
+    }
+
+    product {
+      dimension "mode"
+      //https://developer.android.com/reference/tools/gradle-api/4.2/com/android/build/api/dsl/LintOptions
+      lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+      }
+      buildConfigField "String", "API_BASE_URL", "\"https://api.themoviedb.org/3/\""
+    }
+  }
+}
