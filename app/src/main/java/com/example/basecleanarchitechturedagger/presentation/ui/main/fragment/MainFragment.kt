@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 class MainFragment : DaggerFragment() {
   @Inject
-  private lateinit var viewModelFactory: ViewModelFactory<MainViewModel>
+  lateinit var viewModelFactory: ViewModelFactory<MainViewModel>
 
   private val viewModel: MainViewModel by viewModels { viewModelFactory }
 
@@ -57,7 +57,7 @@ class MainFragment : DaggerFragment() {
     viewModel.failed.observe(
       viewLifecycleOwner,
       Observer {
-        
+
       }
     )
 

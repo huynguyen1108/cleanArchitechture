@@ -6,8 +6,9 @@
 #include <string.h>
 
 bool getpkg(JNIEnv *env, jobject thiz, jobject context);
-JNIEXPORT jstring JNICALL
-Java_com_basecleanarchitechturedagger_data_mapper_CryptMapper_getKey(
+
+JNIEXPORT jstring
+Java_com_example_basecleanarchitechturedagger_data_mapper_CryptMapper_getKey(
     JNIEnv *env,
     jobject instance,
     jobject context){

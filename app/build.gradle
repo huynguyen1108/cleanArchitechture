@@ -110,11 +110,11 @@ android {
   }
 
   //get key từ ndk
-//  externalNativeBuild {
-//    ndkBuild {
-//      path 'src/main/jni/Android.mk'
-//    }
-//  }
+  externalNativeBuild {
+    ndkBuild {
+      path 'src/main/jni/Android.mk'
+    }
+  }
 }
 
 easylauncher {

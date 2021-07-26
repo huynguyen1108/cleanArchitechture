@@ -37,6 +37,7 @@ class AppModule {
   }
 
   @Singleton
+  @Provides
   fun provideCryptMapperInterface(
     @AppContext context: Context
   ): CryptMapperInterface {

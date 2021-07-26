@@ -24,7 +24,7 @@ class ApiErrorHandler @Inject constructor(
 
   fun show(activity: AppCompatActivity?, error: Error) {
     activity?.also {
-      showInner(it.context, ApiError.getTargetClassName(it), it.childFragmentManager, error)
+      showInner(it.applicationContext, ApiError.getTargetClassName(it), it.supportFragmentManager, error)
     }
   }
 

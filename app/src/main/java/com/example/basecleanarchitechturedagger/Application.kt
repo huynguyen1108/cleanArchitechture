@@ -13,7 +13,7 @@ class Application : DaggerApplication() {
   }
 
   @Inject
-  private lateinit var appSettingRepositoryInterface: AppSettingRepositoryInterface
+  lateinit var appSettingRepositoryInterface: AppSettingRepositoryInterface
 
   override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
     return DaggerAppComponent

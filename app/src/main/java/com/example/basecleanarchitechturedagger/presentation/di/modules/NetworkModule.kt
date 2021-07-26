@@ -2,9 +2,7 @@ package com.example.basecleanarchitechturedagger.presentation.di.modules
 
 import android.content.Context
 import com.example.basecleanarchitechturedagger.BuildConfig
-import com.example.basecleanarchitechturedagger.data.remote.Api
-import com.example.basecleanarchitechturedagger.data.remote.Interceptor
-import com.example.basecleanarchitechturedagger.data.remote.TokenAuthenticator
+import com.example.basecleanarchitechturedagger.data.remote.*
 import com.example.basecleanarchitechturedagger.data.remote.entity.ExampleEnum
 import com.example.basecleanarchitechturedagger.domain.repository.AppSettingRepositoryInterface
 import com.example.basecleanarchitechturedagger.domain.repository.TokenRepositoryInterface
@@ -84,5 +82,36 @@ class NetworkModule {
       .client(client)
       .build()
       .create(Api::class.java)
+  }
+
+  @Singleton
+  @Named("RefreshToken")
+  @Provides
+  fun provideRefreshApiOkHttpClient(
+    @AppContext context: Context,
+    appSettingsRepository: AppSettingRepositoryInterface
+  ): OkHttpClient {
+    return createBaseHttpClientBuilder()
+      .addInterceptor(
+        RefreshTokenAuthInterceptor(
+          appSettingRepository = appSettingsRepository
+        )
+      )
+      .build()
+  }
+
+  @Singleton
+  @Provides
+  fun provideRefreshApi(
+    @AppContext context: Context,
+    @Named("RefreshToken") client: OkHttpClient
+  ): RefreshTokenApi {
+    return Retrofit.Builder()
+      .baseUrl(BuildConfig.API_BASE_URL)
+      .addConverterFactory(MoshiConverterFactory.create(createMoshiBuilder()))
+      .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+      .client(client)
+      .build()
+      .create(RefreshTokenApi::class.java)
   }
 }
