@@ -17,4 +17,11 @@
     <style name="ProgressDialog" parent="Theme.MaterialComponents.Dialog">
       <item name="android:background">@drawable/progress_background</item>
     </style>
+
+    <style name="CustomAlertDialog" parent="Theme.MaterialComponents.Dialog">
+      <item name="colorPrimary">#007AFF</item>
+      <item name="android:textColorPrimary">#242526</item>
+      <item name="android:background">#FFFFFF</item>
+      <item name="android:windowBackground">#9913171E</item>
+    </style>
 </resources>

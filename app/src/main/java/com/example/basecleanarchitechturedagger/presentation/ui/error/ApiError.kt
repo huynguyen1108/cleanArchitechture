@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import androidx.fragment.app.Fragment
 import com.example.basecleanarchitechturedagger.data.remote.ApiEnum
+import com.example.basecleanarchitechturedagger.data.remote.entity.error.AppServerError
 import com.example.basecleanarchitechturedagger.data.remote.entity.error.ErrorInterface
 
 abstract class ApiError(val api: ApiEnum, val targetClassName: String? = null) {
@@ -15,17 +16,30 @@ abstract class ApiError(val api: ApiEnum, val targetClassName: String? = null) {
 
     object NotFound : ErrorType()
 
+    object AutoRetry : ErrorType()
+
     data class TokenRefresh(val statusCode: Int?) : ErrorType()
 
     data class Local(val status: Int?, val title: String? = null, val message: String? = null) : ErrorType()
 
     data class JustClose(val title: String? = null, val message: String? = null) : ErrorType()
 
+    data class Back(val title: String? = null, val message: String? = null) : ErrorType()
+
     data class BackToLogin(val title: String? = null, val message: String? = null) : ErrorType()
 
     data class Retry(val title: String? = null, val message: String? = null) : ErrorType()
 
     data class RetryBackToLogin(val title: String? = null, val message: String? = null) : ErrorType()
+
+    data class RetryToContinue(val title: String? = null, val message: String? = null) : ErrorType()
+
+    data class RetryScreen(val title: String? = null, val message: String? = null) : ErrorType()
+
+    data class Validation(
+      val errors: List<AppServerError.Error>,
+      val unnecessaryCorrectly: Boolean = false
+    ) : ErrorType()
   }
 
   abstract fun getErrorType(context: Context, error: ErrorInterface): ErrorType
