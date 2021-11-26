@@ -11,6 +11,7 @@ import com.example.basecleanarchitechturedagger.R
 import com.example.basecleanarchitechturedagger.databinding.FragmentMainBinding
 import com.example.basecleanarchitechturedagger.presentation.di.viewmodelfactory.ViewModelFactory
 import com.example.basecleanarchitechturedagger.presentation.ui.dialog.LoadingProgress
+import com.example.basecleanarchitechturedagger.presentation.ui.error.ApiErrorHandler
 import com.example.basecleanarchitechturedagger.presentation.ui.main.viewmodel.MainViewModel
 import com.wada811.databinding.dataBinding
 import dagger.android.support.DaggerFragment
@@ -27,6 +28,9 @@ class MainFragment : DaggerFragment() {
   private val progress: LoadingProgress by lazy {
     LoadingProgress()
   }
+
+  @Inject
+  lateinit var apiErrorHandler: ApiErrorHandler
 
   override fun onCreateView(
     inflater: LayoutInflater, container: ViewGroup?,
@@ -57,7 +61,7 @@ class MainFragment : DaggerFragment() {
     viewModel.failed.observe(
       viewLifecycleOwner,
       Observer {
-
+        apiErrorHandler.show(this, it)
       }
     )
 
